@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<Gokeep_Tracking>
+			<version>0.0.1</version>
+		</Gokeep_Tracking>
+	</modules>
+	<global>
+		<blocks>
+			<gokeep>
+				<class>Gokeep_Tracking_Block</class>
+			</gokeep>
+		</blocks>
+	</global>
+	<frontend>
+		<layout>
+			<updates>
+				<gokeep_tracking>
+					<file>gokeep/tracking.xml</file>
+				</gokeep_tracking>
+			</updates>
+		</layout>
+	</frontend>
+ </config>
