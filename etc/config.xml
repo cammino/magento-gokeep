@@ -16,6 +16,11 @@
                 <class>Gokeep_Tracking_Helper</class>
             </gokeep>
         </helpers>
+        <models>
+        	<gokeep>
+        		<class>Gokeep_Tracking_Model</class>
+        	</gokeep>
+        </models>
 	</global>
 	<frontend>
 		<layout>
@@ -25,5 +30,15 @@
 				</gokeep_tracking>
 			</updates>
 		</layout>
+		<events>
+			<controller_action_predispatch_checkout_cart_add>
+				<observers>
+					<gokeep_cart_add>
+						<class>gokeep/observer</class>
+						<method>addToCart</method>
+					</gokeep_cart_add>
+				</observers>
+			</controller_action_predispatch_checkout_cart_add>
+		</events>
 	</frontend>
 </config>

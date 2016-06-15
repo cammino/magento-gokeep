@@ -32,13 +32,23 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Main function responsible for delegating which tag will be rendered
+    * Function responsible for delegating which tag will be rendered based on page
     *
     * @return string
     */
-    public function getTrackingCode()
+    public function getPageTrackingCode()
     {
         return $this->setPage();
+    }
+
+    /**
+    * Function responsible for delegating which tag will be rendered based on observers
+    *
+    * @return string
+    */
+    public function getObserverTrackingCode()
+    {
+        return $this->setObserver();
     }
 
     /**
@@ -63,6 +73,48 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
+    * Function responsible for identifying which observer was triggered
+    *
+    * @return string
+    */
+    private function setObserver()
+    {
+        if (Mage::app()->getFrontController()->getRequest()->getControllerName() == "cart")
+        {
+            if (Mage::getModel('core/session')->getGokeepAddProductToCart() != null)
+            {
+                return $this->getTagCartAdd();
+            }
+            
+            return "";
+        }
+    }
+
+    /**
+    * Get tag when user add a product in cart
+    *
+    * @return string
+    */
+    private function getTagCartAdd()
+    {
+        $itemSession = Mage::getModel('core/session')->getGokeepAddProductToCart();
+        $product = Mage::getModel('catalog/product')->load($itemSession->getId());
+
+        Mage::getModel('core/session')->unsGokeepAddProductToCart();
+
+        $items[] = array(
+            "id"    => (int)$this->getProductId($product),
+            "name"  => $this->getProductName($product),
+            "price" => (float)$this->getProductPrice($product),
+            "sku"   => $this->getProductSku($product)
+        );
+
+        $tag = "gokeep('send', 'cartadd', " . json_encode($items) . ");";
+
+        return $tag;
+    }
+
+    /**
     * Generates the tag to the page catalog-product-view
     *
     * @return string
@@ -72,7 +124,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $product = $this->getProduct();
 
         $items[] = array(
-            "id"        => (int) $this->getProductid($product),
+            "id"        => (int)$this->getProductid($product),
             "name"      => $this->getProductName($product),
             "price"     => (float) $this->getProductPrice($product),
             "sku"       => $this->getProductSku($product)
