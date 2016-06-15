@@ -85,9 +85,41 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             {
                 return $this->getTagCartAdd();
             }
-            
-            return "";
+
+            if (Mage::getModel('core/session')->getGokeepDeleteProductFromCart() != null)
+            {
+                return $this->getTagCartRemove();
+            }
         }
+
+        return "";
+    }
+
+    /**
+    * Get tag when user remove a product in cart
+    *
+    * @return string
+    */
+    private function getTagCartRemove()
+    {
+        $result = array();
+        $itemSession = Mage::getModel('core/session')->getGokeepDeleteProductFromCart();
+
+        $product = Mage::getModel('catalog/product')->load($itemSession->getId());
+
+        Mage::getModel('core/session')->unsGokeepDeleteProductFromCart();
+        
+        $items[] = array(
+            "id"    => (int)$this->getProductId($product),
+            "name"  => $this->getProductName($product),
+            "price" => (float)$this->getProductPrice($product),
+            "sku"   => $this->getProductSku($product),
+            "qty"   => $itemSession->getQty()
+        );
+        
+        $tag = "gokeep('send', 'cartremove', " . json_encode($items) . ");";
+
+        return $tag;
     }
 
     /**
@@ -106,7 +138,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "id"    => (int)$this->getProductId($product),
             "name"  => $this->getProductName($product),
             "price" => (float)$this->getProductPrice($product),
-            "sku"   => $this->getProductSku($product)
+            "sku"   => $this->getProductSku($product),
+            "qty"   => $itemSession->getQty()
         );
 
         $tag = "gokeep('send', 'cartadd', " . json_encode($items) . ");";
