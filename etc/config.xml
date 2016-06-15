@@ -11,6 +11,11 @@
 				<class>Gokeep_Tracking_Block</class>
 			</gokeep>
 		</blocks>
+		<helpers>
+            <gokeep>
+                <class>Gokeep_Tracking_Helper</class>
+            </gokeep>
+        </helpers>
 	</global>
 	<frontend>
 		<layout>
@@ -21,4 +26,4 @@
 			</updates>
 		</layout>
 	</frontend>
- </config>
+</config>

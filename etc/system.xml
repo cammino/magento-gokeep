@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs>
+        <gokeep translate="label" module="gokeep">
+            <label>Gokeep</label>
+            <sort_order>100</sort_order>
+        </gokeep>
+    </tabs>
+    <sections>
+        <gokeep translate="label" module="gokeep">
+            <label>General</label>
+            <tab>gokeep</tab>
+            <sort_order>1000</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+ 
+            <groups>
+                <gokeep_group translate="label" module="gokeep">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1000</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+ 
+                    <fields>
+                        <gokeep_store_id translate="label">
+                            <label>ID da loja</label>
+                            <comment>código gerado pelo Gokeep</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </gokeep_store_id>
+                        <gokeep_active translate="label">
+                            <label>Ativar</label>
+                            <comment></comment>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                        </gokeep_active>
+                    </fields>
+                </gokeep_group>
+            </groups>
+        </gokeep>
+    </sections>
+</config>

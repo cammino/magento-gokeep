@@ -11,7 +11,26 @@
 
 class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 {
-    
+    /**
+    * Check if module is active
+    *
+    * @return bool
+    */
+    public function isGokeepActive()
+    {
+        return (bool) Mage::getStoreConfig('gokeep/gokeep_group/gokeep_active');
+    }
+
+    /**
+    * Get the Gokeep Store ID
+    *
+    * @return string
+    */
+    public function getGokeepStoreId()
+    {
+        return (string) Mage::getStoreConfig('gokeep/gokeep_group/gokeep_store_id');
+    }
+
     /**
     * Main function responsible for delegating which tag will be rendered
     *
@@ -56,8 +75,10 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "id"        => (int) $this->getProductid($product),
             "name"      => $this->getProductName($product),
             "price"     => (float) $this->getProductPrice($product),
-            "sku"       => $this->getProductSku($product),
-            "variant"   => $this->getProductVariants($product)
+            "sku"       => $this->getProductSku($product)
+            /**
+            * TODO: Get product variatios
+            * "variant"   => $this->getProductVariants($product) **/
         );
 
         $tag = "gokeep('send', 'productview', " . json_encode($items) . ");";
