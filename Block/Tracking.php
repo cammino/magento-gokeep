@@ -17,7 +17,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     *
     * @return string
     */
-    public function getTrackingCode($code)
+    public function getTrackingCode()
     {
         return $this->setPage();
     }
@@ -25,17 +25,43 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     /**
     * Identifies the page and call the function responsible for generating the tag
     *
+    * Check the current_product page must come before the current_category verification
+    *
     * @return string
     */
     private function setPage()
     {
-        
-        // Category Page
+
+        /* Product View */
+        if(Mage::registry('current_product')){
+            return $this->getTagProductView();
+        }
+
+        /* Category Page */
         if (Mage::registry('current_category')){
             return $this->getTagProductImpression();
-        }else{
-            return "";
         }
+    }
+
+    /**
+    * Generates the tag to the page catalog-product-view
+    *
+    * @return string
+    */
+    private function getTagProductView()
+    {
+        $product = $this->getProduct();
+
+        $items[] = array(
+            "id"        => (int) $this->getProductid($product),
+            "name"      => $this->getProductName($product),
+            "price"     => (float) $this->getProductPrice($product),
+            "sku"       => $this->getProductSku($product),
+            "variant"   => $this->getProductVariants($product)
+        );
+
+        $tag = "gokeep('send', 'productview', " . json_encode($items) . ");";
+        return $tag;
     }
 
     /**
@@ -80,6 +106,16 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
+    * Get actual Product
+    *
+    * @return object
+    */
+    public function getProduct()
+    {
+        return Mage::registry('current_product');
+    }
+
+    /**
     * Get the Id of the product
     *
     * @return int
@@ -118,4 +154,39 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     {
         return $product->getSku();
     }
+
+    /**
+    * Get the variants of the product
+    *
+    * @return array
+    */
+    public function getProductVariants($product)
+    {
+        return "vermelho";
+        // $sku = $product->getData('sku');
+        // $product = $product->load($sku);
+        // if ($product->isConfigurable())
+        // {
+        //     $_attributes = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
+        //     foreach($_attributes as $_attribute)
+        //     {
+        //         // you can now iterate through all the attributes
+             
+        //         // get the attribute label
+        //         $attr_txt = $_attribute["store_label"];
+ 
+        //         // get the attribute values
+        //         foreach ($_attribute["values"] as $value)
+        //         {
+        //             // get the attribute value..
+        //             // .. as for instance the color
+        //             $value_label = $value["label"];
+ 
+        //             // get the price for the option
+        //             $option_price = $value["pricing_value"];
+        //         }
+        //     }
+        // }
+    }
+
 }
