@@ -46,5 +46,13 @@ class Gokeep_Tracking_Model_Observer
 		Mage::getModel('core/session')->setGokeepUpdateProductCart($items);
 	}
 
+	public function orderSuccess()
+	{
+		$incrementId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+		$order = Mage::getModel('sales/order');
+		$order->loadByIncrementId($incrementId);
 
+		$orderId = (int) $order->getId();
+		Mage::getModel('core/session')->setGokeepOrder($orderId);
+	}
 }

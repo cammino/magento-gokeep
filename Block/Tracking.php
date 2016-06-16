@@ -96,8 +96,49 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 return $this->getTagCartUpdate();
             }
         }
+        
+        if (Mage::getModel('core/session')->getGokeepOrder() != null)
+        {
+            return $this->getTagOrder();
+        }
 
         return "";
+    }
+
+    /**
+    * Get order tag
+    *
+    * @return string
+    */
+    public function getTagOrder()
+    {
+        $orderId = Mage::getModel('core/session')->getGokeepOrder();
+        $order = Mage::getModel('sales/order')->load($orderId);
+
+        $products = $order->getAllVisibleItems();
+        $items = array();
+
+        foreach ($products as $product) {
+            $items[] = array (
+                "id"    => (int) $product->getProduct()->getId(),
+                "price" => (float) $product->getProduct()->getPrice(),
+                "qty"   => (int) $product->getData('qty_ordered')
+            );
+        }
+
+        $json = array(
+            "id"        => $orderId,
+            "total"     => (float) $order->getGrandTotal(),
+            "shipping"  => (float) $order->getShippingAmount(),
+            "tax"       => (float) $order->getData('tax_amount'),
+            "coupon"    => (string)$order->getCouponCode(),
+            "items"     => $items
+        );
+
+        Mage::getModel('core/session')->unsGokeepOrder();
+
+        $tag = "gokeep('send', 'order', " . json_encode($json) . "); ";
+        return $tag;
     }
 
     /**
@@ -118,8 +159,9 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "qty"   => $product["qty"]
             );
         }
-        Mage::getModel('core/session')->unsGokeepUpdateProductCart();
         
+        Mage::getModel('core/session')->unsGokeepUpdateProductCart();
+
         $tag = "gokeep('send', 'cartupdate', " . json_encode($items) . ");";
         return $tag;
     }
