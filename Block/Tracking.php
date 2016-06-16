@@ -96,7 +96,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 return $this->getTagCartUpdate();
             }
         }
-        
+
         if (Mage::getModel('core/session')->getGokeepOrder() != null)
         {
             return $this->getTagOrder();
@@ -231,10 +231,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "id"        => (int)$this->getProductid($product),
             "name"      => $this->getProductName($product),
             "price"     => (float) $this->getProductPrice($product),
-            "sku"       => $this->getProductSku($product)
-            /**
-            * TODO: Get product variatios
-            * "variant"   => $this->getProductVariants($product) **/
+            "sku"       => $this->getProductSku($product),
+            "image"     => $this->getProductImage($product)
         );
 
         $tag = "gokeep('send', 'productview', " . json_encode($items) . ");";
@@ -338,37 +336,13 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Get the variants of the product
+    * Get the image of the product
     *
     * @return array
     */
-    public function getProductVariants($product)
+    public function getProductImage($product)
     {
-        return "vermelho";
-        // $sku = $product->getData('sku');
-        // $product = $product->load($sku);
-        // if ($product->isConfigurable())
-        // {
-        //     $_attributes = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
-        //     foreach($_attributes as $_attribute)
-        //     {
-        //         // you can now iterate through all the attributes
-             
-        //         // get the attribute label
-        //         $attr_txt = $_attribute["store_label"];
- 
-        //         // get the attribute values
-        //         foreach ($_attribute["values"] as $value)
-        //         {
-        //             // get the attribute value..
-        //             // .. as for instance the color
-        //             $value_label = $value["label"];
- 
-        //             // get the price for the option
-        //             $option_price = $value["pricing_value"];
-        //         }
-        //     }
-        // }
+        return $product->getImageUrl();
     }
 
 }
