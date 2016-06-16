@@ -90,9 +90,38 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             {
                 return $this->getTagCartRemove();
             }
+
+            if (Mage::getModel('core/session')->getGokeepUpdateProductCart() != null)
+            {
+                return $this->getTagCartUpdate();
+            }
         }
 
         return "";
+    }
+
+    /**
+     * Get tag when user update products in cart
+     *
+     * @return string
+     */
+    private function getTagCartUpdate()
+    {
+        $itemSession = Mage::getModel('core/session')->getGokeepUpdateProductCart();
+        $items = array();
+
+        foreach ($itemSession as $product) {
+            $items[] = array(
+                "id"    => $product["id"],
+                "name"  => $product["name"],
+                "price" => $product["price"],
+                "qty"   => $product["qty"]
+            );
+        }
+        Mage::getModel('core/session')->unsGokeepUpdateProductCart();
+        
+        $tag = "gokeep('send', 'cartupdate', " . json_encode($items) . ");";
+        return $tag;
     }
 
     /**

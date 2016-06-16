@@ -41,12 +41,20 @@
 			</controller_action_predispatch_checkout_cart_add>
 			<controller_action_predispatch_checkout_cart_delete>
 				<observers>
-					<googleanalytics_cart_delete>
+					<gokeep_cart_delete>
 						<class>gokeep/observer</class>
 						<method>deleteFromCart</method>
-					</googleanalytics_cart_delete>
-				</observers>
+					</gokeep_cart_delete>
+				</observers> <!--checkout_cart_update_items_-->
 			</controller_action_predispatch_checkout_cart_delete>
+			<checkout_cart_update_items_after>
+				<observers>
+					<gokeep_cart_update>
+						<class>gokeep/observer</class>
+						<method>updateCart</method>
+					</gokeep_cart_update>
+				</observers>
+			</checkout_cart_update_items_after>
 		</events>
 	</frontend>
 </config>

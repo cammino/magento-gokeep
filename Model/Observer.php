@@ -29,4 +29,22 @@ class Gokeep_Tracking_Model_Observer
 		);
 	}
 
+	public function updateCart()
+	{
+		$cart = Mage::getSingleton('checkout/cart')->getQuote();		
+			
+		foreach ($cart->getAllItems() as $product)
+		{
+			$items[] = array(
+	            "id"    => (int) $product->getProduct()->getId(),
+	            "name"  => $product->getProduct()->getName(),
+	            "price" => (float) $product->getProduct()->getPrice(),
+	            "qty"   => $product->getQty()
+            );
+		}
+
+		Mage::getModel('core/session')->setGokeepUpdateProductCart($items);
+	}
+
+
 }
