@@ -269,6 +269,27 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
+    * Get items for checkout tag
+    *
+    * @return array
+    */
+    public function getItemsTagCheckout()
+    {
+        $items = array();
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $products = $quote->getAllVisibleItems();
+        
+        foreach ($products as $product) {
+            $items[] = array (
+                "id"    => (int)    $product->getProduct()->getId(),
+                "price" => (float)  $product->getProduct()->getPrice(),
+                "qty"   => (int)    $product->getQty()
+            );
+        }
+        return json_encode($items);
+    }
+
+    /**
     * Get Products
     *
     * @return array
@@ -364,24 +385,4 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     {
         return (Mage::getSingleton('customer/session')->isLoggedIn());
     }
-
-    /**
-    * Get tag for checkout/onepage
-    *
-    * @return string
-    */
-    public function getTagCheckout()
-    {
-
-        return '
-            gokeep("send", "order", { 
-                step: step, step_label: steplabel, additional: "",
-                items: [
-                    { id: 2, price: 20.10, qty: 1 },
-                    { id: 4, price: 20.10, qty: 1 }
-                ]
-              }';
-    }
-
-
 }
