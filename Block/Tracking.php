@@ -338,11 +338,50 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     /**
     * Get the image of the product
     *
-    * @return array
+    * @return string
     */
     public function getProductImage($product)
     {
         return $product->getImageUrl();
     }
+
+    /**
+    * Check if is page checkout/onepage
+    *
+    * @return bool
+    */
+    public function isCheckoutPage()
+    {
+        return (Mage::app()->getFrontController()->getRequest()->getControllerName() == "onepage");
+    }
+
+    /**
+    * Check if user is logged
+    *
+    * @return bool
+    */
+    public function isUserLogged()
+    {
+        return (Mage::getSingleton('customer/session')->isLoggedIn());
+    }
+
+    /**
+    * Get tag for checkout/onepage
+    *
+    * @return string
+    */
+    public function getTagCheckout()
+    {
+
+        return '
+            gokeep("send", "order", { 
+                step: step, step_label: steplabel, additional: "",
+                items: [
+                    { id: 2, price: 20.10, qty: 1 },
+                    { id: 4, price: 20.10, qty: 1 }
+                ]
+              }';
+    }
+
 
 }
