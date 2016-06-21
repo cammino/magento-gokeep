@@ -132,6 +132,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     private function setObserverLead()
     {
+
         if (Mage::getModel('core/session')->getGokeepLead() != null)
         {
             return $this->getTagLead("default");
@@ -142,7 +143,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             return $this->getTagLead("billing");
         }
 
-        if (Mage::getModel('core/session')->getGokeepLeadSubscriber() != null)
+        if (Mage::getModel('core/session')->getGokeepLeadSubscriber() != null && !$this->getRequest()->isXmlHttpRequest())
         {
             return $this->getTagLead("subscriber");
         }
@@ -161,11 +162,11 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             $customer = Mage::getModel('core/session')->getGokeepLead();
             Mage::getModel('core/session')->unsGokeepLead();
         }
-        else if ($page == "billing"){
+        elseif ($page == "billing"){
             $customer = Mage::getModel('core/session')->getGokeepLeadBilling();
             Mage::getModel('core/session')->unsGokeepLeadBilling();
         }
-        else if ($page == "subscriber"){
+        elseif ($page == "subscriber"){
             $customer = Mage::getModel('core/session')->getGokeepLeadSubscriber();
             Mage::getModel('core/session')->unsGokeepLeadSubscriber();
         }

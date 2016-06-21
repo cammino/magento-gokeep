@@ -124,12 +124,11 @@ class Gokeep_Tracking_Model_Observer
 	public function setSubscriber(Varien_Event_Observer $observer)
 	{
 	    $data = $observer->getEvent()->getDataObject()->getData();
-
 	    $return = array(
 			"name" 	=> "",
 			"email" => $data["subscriber_email"]
 		);
-
+		
 	    Mage::getModel('core/session')->setGokeepLeadSubscriber($return);
 	}
 }
