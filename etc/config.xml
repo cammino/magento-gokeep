@@ -95,6 +95,14 @@
 					</gokeep_lead_register_billing>
 				</observers>
 			</controller_action_predispatch_checkout_onepage_saveBilling>
+			<newsletter_subscriber_save_commit_after>
+				<observers>
+					<gokeep_subscriber_success>
+						<class>gokeep/observer</class>
+						<method>setSubscriber</method>
+					</gokeep_subscriber_success>
+				</observers>
+			</newsletter_subscriber_save_commit_after>
 		</events>
 	</frontend>
 </config>

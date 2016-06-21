@@ -48,9 +48,9 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getObserverTrackingCode($page)
     {
-        if($page == "cart"){ return $this->setObserverCart();   }
+        if($page == "cart") { return $this->setObserverCart();  }
         if($page == "order"){ return $this->setObserverOrder(); }
-        if($page == "lead"){ return $this->setObserverLead();   }
+        if($page == "lead") { return $this->setObserverLead();  }
         return "";
     }
 
@@ -63,17 +63,26 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     private function setPage()
     {
-        /* Product View */
-        if(Mage::registry('current_product')){
+        // Product View
+        if(Mage::registry('current_product')) 
+        {
             return $this->getTagProductView();
         }
 
-        /* Category Page */
-        if (Mage::registry('current_category')){
+        // Category Page
+        if (Mage::registry('current_category'))
+        {
             return $this->getTagProductImpression();
         }
+
+        return "";
     }
 
+    /**
+    * Identify if there is a variable in the session to render the tag and checks which tag will be rendered based on the action cart (add, update, delete)
+    *
+    * @return string
+    */
     private function setObserverCart()
     {
         if (Mage::app()->getFrontController()->getRequest()->getControllerName() == "cart")
@@ -97,27 +106,45 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         return "";
     }
 
-
+    /**
+    * Identify if there is a variable in the session to render the tag for order success
+    *
+    * @return string
+    */
     private function setObserverOrder()
     {
         if (Mage::getModel('core/session')->getGokeepOrder() != null)
         {
             return $this->getTagOrder();
         }
-
         return "";
     }
 
+    /**
+    * Identify if there is a variable in the session to render the tag and checks which tag will be rendered based on customer action
+    *
+    * Possible actions for get the email customer and identity the lead:
+    * - Default (Login/Account register in menu store or Login in billing)
+    * - Billing (Account register in billing)
+    * - Subscriber (Opt-in/newsletter in footer store)
+    *
+    * @return string
+    */
     private function setObserverLead()
     {
-        if (Mage::getModel('core/session')->getGokeepLeadBilling() != null)
-        {
-            return $this->getTagLead(true);
-        }
-
         if (Mage::getModel('core/session')->getGokeepLead() != null)
         {
-            return $this->getTagLead();
+            return $this->getTagLead("default");
+        }
+
+        if (Mage::getModel('core/session')->getGokeepLeadBilling() != null)
+        {
+            return $this->getTagLead("billing");
+        }
+
+        if (Mage::getModel('core/session')->getGokeepLeadSubscriber() != null)
+        {
+            return $this->getTagLead("subscriber");
         }
 
         return "";
@@ -128,14 +155,22 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     *
     * @return string
     */
-    public function getTagLead($billing = false)
+    public function getTagLead($page)
     {
-        if($billing){
-            $customer = Mage::getModel('core/session')->getGokeepLeadBilling();
-            Mage::getModel('core/session')->unsGokeepLeadBilling();
-        }else{
+        if ($page == "default"){
             $customer = Mage::getModel('core/session')->getGokeepLead();
             Mage::getModel('core/session')->unsGokeepLead();
+        }
+        else if ($page == "billing"){
+            $customer = Mage::getModel('core/session')->getGokeepLeadBilling();
+            Mage::getModel('core/session')->unsGokeepLeadBilling();
+        }
+        else if ($page == "subscriber"){
+            $customer = Mage::getModel('core/session')->getGokeepLeadSubscriber();
+            Mage::getModel('core/session')->unsGokeepLeadSubscriber();
+        }
+        else{
+            return "";
         }
 
         $json = array(
@@ -183,7 +218,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Get tag when user update products in cart
+    * Get cart update tag
     *
     * @return string
     */
@@ -208,7 +243,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Get tag when user remove a product in cart
+    * Get cart remove tag
     *
     * @return string
     */
@@ -235,7 +270,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Get tag when user add a product in cart
+    * Get cart add tag
     *
     * @return string
     */
@@ -259,7 +294,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Generates the tag to the page catalog-product-view
+    * Get product view tag
     *
     * @return string
     */
@@ -280,7 +315,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Generates the tag to the page catalog-category-view
+    * Get product impressions tag
     *
     * @return string
     */
@@ -311,7 +346,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     /**
     * Get items for checkout tag
     *
-    * @return array
+    * @return json
     */
     public function getItemsTagCheckout()
     {
@@ -347,7 +382,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Get actual Product
+    * Get actual product
     *
     * @return object
     */
