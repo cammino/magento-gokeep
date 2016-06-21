@@ -55,4 +55,28 @@ class Gokeep_Tracking_Model_Observer
 		$orderId = (int) $order->getId();
 		Mage::getModel('core/session')->setGokeepOrder($orderId);
 	}
+
+	/* Login (normal and billing) and Account Register (normal) */
+	public function setLeadLoginRegister(Varien_Event_Observer $observer)
+	{
+		$customer = $observer->getEvent()->getCustomer();
+		$return = array(
+			"name" 	=> $customer->getFirstname() . " " . $customer->getLastname(),
+			"email" => $customer->getEmail()
+		);
+
+		Mage::getModel('core/session')->setGokeepLead($return);
+	}
+
+	/* Account Register (billing) */
+	public function setLeadRegisterBilling()
+	{
+		$post = Mage::app()->getRequest()->getPost();
+		$return = array(
+			"name" 	=> $post["billing"]["firstname"] . " " . $post["billing"]["lastname"],
+			"email" => $post["billing"]["email"]
+		);
+
+		Mage::getModel('core/session')->setGokeepLeadBilling($return);
+	}
 }

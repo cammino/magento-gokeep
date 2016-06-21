@@ -46,21 +46,23 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     *
     * @return string
     */
-    public function getObserverTrackingCode()
+    public function getObserverTrackingCode($page)
     {
-        return $this->setObserver();
+        if($page == "cart"){ return $this->setObserverCart();   }
+        if($page == "order"){ return $this->setObserverOrder(); }
+        if($page == "lead"){ return $this->setObserverLead();   }
+        return "";
     }
 
     /**
     * Identifies the page and call the function responsible for generating the tag
     *
-    * Check the current_product page must come before the current_category verification
+    * current_product validation must come before the current_category verification
     *
     * @return string
     */
     private function setPage()
     {
-
         /* Product View */
         if(Mage::registry('current_product')){
             return $this->getTagProductView();
@@ -72,12 +74,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         }
     }
 
-    /**
-    * Function responsible for identifying which observer was triggered
-    *
-    * @return string
-    */
-    private function setObserver()
+    private function setObserverCart()
     {
         if (Mage::app()->getFrontController()->getRequest()->getControllerName() == "cart")
         {
@@ -97,12 +94,56 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             }
         }
 
+        return "";
+    }
+
+
+    private function setObserverOrder()
+    {
         if (Mage::getModel('core/session')->getGokeepOrder() != null)
         {
             return $this->getTagOrder();
         }
 
         return "";
+    }
+
+    private function setObserverLead()
+    {
+        if (Mage::getModel('core/session')->getGokeepLeadBilling() != null)
+        {
+            return $this->getTagLead(true);
+        }
+
+        if (Mage::getModel('core/session')->getGokeepLead() != null)
+        {
+            return $this->getTagLead();
+        }
+
+        return "";
+    }
+
+    /**
+    * Get lead tag
+    *
+    * @return string
+    */
+    public function getTagLead($billing = false)
+    {
+        if($billing){
+            $customer = Mage::getModel('core/session')->getGokeepLeadBilling();
+            Mage::getModel('core/session')->unsGokeepLeadBilling();
+        }else{
+            $customer = Mage::getModel('core/session')->getGokeepLead();
+            Mage::getModel('core/session')->unsGokeepLead();
+        }
+
+        $json = array(
+            "name"  => $customer["name"],
+            "email" => $customer["email"]
+        );
+
+        return "gokeep('send', 'lead', ". json_encode($json) .");";
     }
 
     /**
@@ -142,10 +183,10 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-     * Get tag when user update products in cart
-     *
-     * @return string
-     */
+    * Get tag when user update products in cart
+    *
+    * @return string
+    */
     private function getTagCartUpdate()
     {
         $itemSession = Mage::getModel('core/session')->getGokeepUpdateProductCart();
@@ -214,7 +255,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         );
 
         $tag = "gokeep('send', 'cartadd', " . json_encode($items) . ");";
-
         return $tag;
     }
 

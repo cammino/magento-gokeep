@@ -71,6 +71,30 @@
 					</gokeep_order_success>
 				</observers>
 			</checkout_multishipping_controller_success_action>
+			<customer_register_success>
+				<observers>
+					<gokeep_lead_login_register>
+						<class>gokeep/observer</class>
+						<method>setLeadLoginRegister</method>
+					</gokeep_lead_login_register>
+				</observers>
+			</customer_register_success>
+			<customer_login>
+				<observers>
+					<gokeep_lead_login_register>
+						<class>gokeep/observer</class>
+						<method>setLeadLoginRegister</method>
+					</gokeep_lead_login_register>
+				</observers>
+			</customer_login>
+			<controller_action_predispatch_checkout_onepage_saveBilling>
+				<observers>
+					<gokeep_lead_register_billing>
+						<class>gokeep/observer</class>
+						<method>setLeadRegisterBilling</method>
+					</gokeep_lead_register_billing>
+				</observers>
+			</controller_action_predispatch_checkout_onepage_saveBilling>
 		</events>
 	</frontend>
 </config>
