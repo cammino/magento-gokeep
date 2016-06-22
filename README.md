@@ -1,4 +1,6 @@
 # Gokeep Tracking (Magento)
+### Versão
+0.0.1
 
 ### Sobre
 Módulo desenvolvido para lojas magento para obter informações dos usuários que navegam na loja
@@ -13,6 +15,3 @@ $ mv app/code/community/Gokeep/Tracking/tracking.xml app/design/frontend/default
 $ mv app/code/community/Gokeep/Tracking/tracking-default.phtml app/design/frontend/default/YOUR_THEME/template/gokeep
 $ mv app/code/community/Gokeep/Tracking/tracking-checkout.phtml app/design/frontend/default/YOUR_THEME/template/gokeep
 ```
-
-### Versão
-0.0.1
