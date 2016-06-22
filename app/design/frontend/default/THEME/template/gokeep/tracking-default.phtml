@@ -1,0 +1,23 @@
+<?php if($this->isGokeepActive()): ?>
+<!-- Begin Gokeep Tracking -->
+<script>
+(function(w, d, s, h, g, a, m) {
+        w[g] = w[g] || function() {
+            (w[g].q = w[g].q || []).push(arguments)
+        }, w[g].l = 1 * new Date();
+        a = d.createElement(s),
+            m = d.getElementsByTagName(s)[0];
+        a.async = 1;
+        a.src = h;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//192.168.0.80:3000', 'gokeep');
+
+gokeep("create", "<?php echo $this->getGokeepStoreId() ?>");
+gokeep("send", "pageview");
+<?php echo $this->getPageTrackingCode(); ?>
+<?php echo $this->getObserverTrackingCode("cart"); ?>
+<?php echo $this->getObserverTrackingCode("order"); ?>
+<?php echo $this->getObserverTrackingCode("lead"); ?>
+</script>
+<!-- End Gokeep Tracking -->
+<?php endif; ?>

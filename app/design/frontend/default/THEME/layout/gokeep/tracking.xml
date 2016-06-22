@@ -1,0 +1,14 @@
+<layout version="1.0.0">
+    <default>
+        <reference name="head">
+			<block type="gokeep/tracking" name="gokeeptrackingdefault" template="gokeep/tracking-default.phtml" />
+		</reference>
+	</default>
+
+	<checkout_onepage_index translate="label">
+        <reference name="before_body_end">
+			<block type="gokeep/tracking" name="gokeeptrackingcheckout" template="gokeep/tracking-checkout.phtml" />
+        </reference>
+    </checkout_onepage_index>
+</layout>
+

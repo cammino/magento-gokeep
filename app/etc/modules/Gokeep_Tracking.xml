@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Gokeep_Tracking>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Gokeep_Tracking>
+    </modules>
+</config>

@@ -1,0 +1,32 @@
+<?php if($this->isGokeepActive()): ?>
+<!-- Gokeep Checkout start -->
+<script>
+	function tagGokeep(step,step_label){
+		gokeep("send", "checkout", { step: step, step_label: step_label, additional: "", items: <?php echo $this->getItemsTagCheckout(); ?> });
+	    gokeep("send", "pageview"); // usando ajax ou adicionando mais methods é obrigatorio o pageview
+	}
+
+	document.observe("dom:loaded", function() {
+		var eventGokee = function (method) {
+			switch (method) {
+				case "opc-login": 				tagGokeep(1,"Login");					break;
+				case "opc-billing": 			tagGokeep(2,"Endereço de Cobrança");	break;
+				case "opc-shipping": 			tagGokeep(3, "Endereço de Entrega");	break;
+				case "opc-shipping_method": 	tagGokeep(4, "Frete");					break;
+				case "opc-payment": 			tagGokeep(5, "Pagamento");				break;
+				case "opc-review":				tagGokeep(6, "Revisão");				break;
+			}
+		}
+
+		// Starts when the page loads
+		eventGokee(accordion.currentSection);
+		
+		// Starts when the variable (currentSection) changes
+		accordion.watch("currentSection", function (currentSection, oldSection, newSection) {
+			eventGokee(newSection);
+			return newSection;
+		});
+	});
+</script>
+<!-- Gokeep Checkout end -->
+<?php endif; ?>
