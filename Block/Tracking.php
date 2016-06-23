@@ -198,7 +198,10 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         foreach ($products as $product) {
             $items[] = array (
                 "id"    => (int) $product->getProduct()->getId(),
+                "name"  => (string) $product->getProduct()->getName(),
                 "price" => (float) $product->getProduct()->getPrice(),
+                "sku"   => (int) $product->getProduct()->getSku(),
+                "image" => (string) $product->getProduct()->getImageUrl(),
                 "qty"   => (int) $product->getData('qty_ordered')
             );
         }
@@ -233,6 +236,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "id"    => $product["id"],
                 "name"  => $product["name"],
                 "price" => $product["price"],
+                "image" => Mage::getModel('catalog/product')->load($product["id"])->getImageUrl(),
                 "qty"   => $product["qty"]
             );
         }
@@ -262,6 +266,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "name"  => $this->getProductName($product),
             "price" => (float)$this->getProductPrice($product),
             "sku"   => $this->getProductSku($product),
+            "image" => $this->getProductImage($product),
             "qty"   => $itemSession->getQty()
         );
         
@@ -287,6 +292,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "name"  => $this->getProductName($product),
             "price" => (float)$this->getProductPrice($product),
             "sku"   => $this->getProductSku($product),
+            "image" => $this->getProductImage($product),
             "qty"   => $itemSession->getQty()
         );
 
@@ -331,7 +337,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                  "id"    => (int)$this->getProductId($product),
                  "name"  => $this->getProductName($product),
                  "price" => (float)$this->getProductPrice($product),
-                 "sku"   => $this->getProductSku($product)
+                 "sku"   => $this->getProductSku($product),
+                 "image" => $this->getProductImage($product)
             );
         }
 
@@ -358,7 +365,10 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         foreach ($products as $product) {
             $items[] = array (
                 "id"    => (int)    $product->getProduct()->getId(),
+                "name"  => (string) $product->getProduct()->getName(),
                 "price" => (float)  $product->getProduct()->getPrice(),
+                "sku"   => (int)    $product->getProduct()->getSku(),
+                "image" => (string) $product->getProduct()->getImageUrl(),
                 "qty"   => (int)    $product->getQty()
             );
         }
