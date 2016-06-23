@@ -10,7 +10,7 @@
         a.async = 1;
         a.src = h;
         m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//192.168.0.80:3000', 'gokeep');
+    })(window, document, 'script', 'http://tracking.gokeep.me', 'gokeep');
 
 gokeep("create", "<?php echo $this->getGokeepStoreId() ?>");
 gokeep("send", "pageview");
