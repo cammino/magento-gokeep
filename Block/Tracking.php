@@ -202,7 +202,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "price" => (float) $product->getProduct()->getPrice(),
                 "sku"   => (int) $product->getProduct()->getSku(),
                 "image" => (string) $product->getProduct()->getImageUrl(),
-                "qty"   => (int) $product->getData('qty_ordered')
+                "qty"   => (int) $product->getData('qty_ordered'),
+                "url"   => (string) $this->getProductUrl($product->getProduct())
             );
         }
 
@@ -237,7 +238,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "name"  => $product["name"],
                 "price" => $product["price"],
                 "image" => Mage::getModel('catalog/product')->load($product["id"])->getImageUrl(),
-                "qty"   => $product["qty"]
+                "qty"   => $product["qty"],
+                "url"   => $this->getProductUrl(Mage::getModel('catalog/product')->load($product["id"]))
             );
         }
         
@@ -267,7 +269,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "price" => (float)$this->getProductPrice($product),
             "sku"   => $this->getProductSku($product),
             "image" => $this->getProductImage($product),
-            "qty"   => $itemSession->getQty()
+            "qty"   => $itemSession->getQty(),
+            "url"   => $this->getProductUrl($product)
         );
         
         $tag = "gokeep('send', 'cartremove', " . json_encode($items) . ");";
@@ -293,7 +296,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "price" => (float)$this->getProductPrice($product),
             "sku"   => $this->getProductSku($product),
             "image" => $this->getProductImage($product),
-            "qty"   => $itemSession->getQty()
+            "qty"   => $itemSession->getQty(),
+            "url"   => $this->getProductUrl($product)
         );
 
         $tag = "gokeep('send', 'cartadd', " . json_encode($items) . ");";
@@ -314,7 +318,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "name"      => $this->getProductName($product),
             "price"     => (float) $this->getProductPrice($product),
             "sku"       => $this->getProductSku($product),
-            "image"     => $this->getProductImage($product)
+            "image"     => $this->getProductImage($product),
+            "url"       => $this->getProductUrl($product)
         );
 
         $tag = "gokeep('send', 'productview', " . json_encode($items) . ");";
@@ -338,7 +343,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                  "name"  => $this->getProductName($product),
                  "price" => (float)$this->getProductPrice($product),
                  "sku"   => $this->getProductSku($product),
-                 "image" => $this->getProductImage($product)
+                 "image" => $this->getProductImage($product),
+                 "url"  => $this->getProductUrl($product)
             );
         }
 
@@ -369,7 +375,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "price" => (float)  $product->getProduct()->getPrice(),
                 "sku"   => (int)    $product->getProduct()->getSku(),
                 "image" => (string) $product->getProduct()->getImageUrl(),
-                "qty"   => (int)    $product->getQty()
+                "qty"   => (int)    $product->getQty(),
+                "url"   => (string) $product->getProduct()->getProductUrl()
             );
         }
         return json_encode($items);
@@ -450,6 +457,16 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     public function getProductImage($product)
     {
         return $product->getImageUrl();
+    }
+
+    /**
+    * Get the url of the product
+    *
+    * @return string
+    */
+    public function getProductUrl($product)
+    {
+        return $product->getProductUrl();
     }
 
     /**
