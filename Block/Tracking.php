@@ -192,27 +192,30 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $orderId = Mage::getModel('core/session')->getGokeepOrder();
         $order = Mage::getModel('sales/order')->load($orderId);
 
-        $products = $order->getAllVisibleItems();
+        $orderItems = $order->getAllVisibleItems();
         $items = array();
 
-        foreach ($products as $product) {
+        foreach ($orderItems as $orderItem) {
+
+            $product = $orderItem->getProduct();
+
             $items[] = array (
-                "id"    => (int) $product->getProduct()->getId(),
-                "name"  => (string) $product->getProduct()->getName(),
-                "price" => (float) $product->getProduct()->getPrice(),
-                "sku"   => (int) $product->getProduct()->getSku(),
-                "image" => (string) $product->getProduct()->getImageUrl(),
-                "qty"   => (int) $product->getData('qty_ordered'),
-                "url"   => (string) $this->getProductUrl($product->getProduct())
+                "id"    => (int)    $product->getId(),
+                "name"  => (string) $product->getName(),
+                "price" => (float)  $product->getPrice(),
+                "sku"   => (string) $product->getSku(),
+                "image" => (string) $product->getImageUrl(),
+                "qty"   => (int)    $orderItem->getData('qty_ordered'),
+                "url"   => (string) $this->getProductUrl($product)
             );
         }
 
         $json = array(
-            "id"        => $orderId,
-            "total"     => (float) $order->getGrandTotal(),
-            "shipping"  => (float) $order->getShippingAmount(),
-            "tax"       => (float) $order->getData('tax_amount'),
-            "coupon"    => (string)$order->getCouponCode(),
+            "id"        => (int)    $orderId,
+            "total"     => (float)  $order->getGrandTotal(),
+            "shipping"  => (float)  $order->getShippingAmount(),
+            "tax"       => (float)  $order->getData('tax_amount'),
+            "coupon"    => (string) $order->getCouponCode(),
             "items"     => $items
         );
 
@@ -229,17 +232,21 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     private function getTagCartUpdate()
     {
-        $itemSession = Mage::getModel('core/session')->getGokeepUpdateProductCart();
+        $sessionItems = Mage::getModel('core/session')->getGokeepUpdateProductCart();
         $items = array();
 
-        foreach ($itemSession as $product) {
+        foreach ($sessionItems as $sessionItem) {
+
+            $product = Mage::getModel('catalog/product')->load($sessionItem["id"]);
+
             $items[] = array(
-                "id"    => $product["id"],
-                "name"  => $product["name"],
-                "price" => $product["price"],
-                "image" => Mage::getModel('catalog/product')->load($product["id"])->getImageUrl(),
-                "qty"   => $product["qty"],
-                "url"   => $this->getProductUrl(Mage::getModel('catalog/product')->load($product["id"]))
+                "id"    => (int)    $sessionItem["id"],
+                "name"  => (string) $sessionItem["name"],
+                "price" => (float)  $sessionItem["price"],
+                "sku"   => (string) $sessionItem["sku"],
+                "image" => (string) $product->getImageUrl(),
+                "qty"   => (int)    $sessionItem["qty"],
+                "url"   => (string) $this->getProductUrl($product)
             );
         }
         
@@ -256,21 +263,19 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     private function getTagCartRemove()
     {
-        $result = array();
-        $itemSession = Mage::getModel('core/session')->getGokeepDeleteProductFromCart();
-
-        $product = Mage::getModel('catalog/product')->load($itemSession->getId());
+        $sessionItem = Mage::getModel('core/session')->getGokeepDeleteProductFromCart();
+        $product = Mage::getModel('catalog/product')->load($sessionItem->getId());
 
         Mage::getModel('core/session')->unsGokeepDeleteProductFromCart();
         
         $items[] = array(
-            "id"    => (int)$this->getProductId($product),
-            "name"  => $this->getProductName($product),
-            "price" => (float)$this->getProductPrice($product),
-            "sku"   => $this->getProductSku($product),
-            "image" => $this->getProductImage($product),
-            "qty"   => $itemSession->getQty(),
-            "url"   => $this->getProductUrl($product)
+            "id"    => (int)    $this->getProductId($product),
+            "name"  => (string) $this->getProductName($product),
+            "price" => (float)  $this->getProductPrice($product),
+            "sku"   => (string) $this->getProductSku($product),
+            "image" => (string) $this->getProductImage($product),
+            "qty"   => (int)    $sessionItem->getQty(),
+            "url"   => (string) $this->getProductUrl($product)
         );
         
         $tag = "gokeep('send', 'cartremove', " . json_encode($items) . ");";
@@ -285,19 +290,19 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     private function getTagCartAdd()
     {
-        $itemSession = Mage::getModel('core/session')->getGokeepAddProductToCart();
-        $product = Mage::getModel('catalog/product')->load($itemSession->getId());
+        $sessionItem = Mage::getModel('core/session')->getGokeepAddProductToCart();
+        $product = Mage::getModel('catalog/product')->load($sessionItem->getId());
 
         Mage::getModel('core/session')->unsGokeepAddProductToCart();
 
         $items[] = array(
-            "id"    => (int)$this->getProductId($product),
-            "name"  => $this->getProductName($product),
-            "price" => (float)$this->getProductPrice($product),
-            "sku"   => $this->getProductSku($product),
-            "image" => $this->getProductImage($product),
-            "qty"   => $itemSession->getQty(),
-            "url"   => $this->getProductUrl($product)
+            "id"    => (int)    $this->getProductId($product),
+            "name"  => (string) $this->getProductName($product),
+            "price" => (float)  $this->getProductPrice($product),
+            "sku"   => (string) $this->getProductSku($product),
+            "image" => (string) $this->getProductImage($product),
+            "qty"   => (int)    $sessionItem->getQty(),
+            "url"   => (string) $this->getProductUrl($product)
         );
 
         $tag = "gokeep('send', 'cartadd', " . json_encode($items) . ");";
@@ -314,12 +319,12 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $product = $this->getProduct();
 
         $items[] = array(
-            "id"        => (int)$this->getProductid($product),
-            "name"      => $this->getProductName($product),
-            "price"     => (float) $this->getProductPrice($product),
-            "sku"       => $this->getProductSku($product),
-            "image"     => $this->getProductImage($product),
-            "url"       => $this->getProductUrl($product)
+            "id"        => (int)    $this->getProductid($product),
+            "name"      => (string) $this->getProductName($product),
+            "price"     => (float)  $this->getProductPrice($product),
+            "sku"       => (string) $this->getProductSku($product),
+            "image"     => (string) $this->getProductImage($product),
+            "url"       => (string) $this->getProductUrl($product)
         );
 
         $tag = "gokeep('send', 'productview', " . json_encode($items) . ");";
@@ -339,12 +344,12 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
         foreach ($products as $product){
             $items[] = array(
-                 "id"    => (int)$this->getProductId($product),
-                 "name"  => $this->getProductName($product),
-                 "price" => (float)$this->getProductPrice($product),
-                 "sku"   => $this->getProductSku($product),
-                 "image" => $this->getProductImage($product),
-                 "url"  => $this->getProductUrl($product)
+                 "id"    => (int)    $this->getProductId($product),
+                 "name"  => (string) $this->getProductName($product),
+                 "price" => (float)  $this->getProductPrice($product),
+                 "sku"   => (string) $this->getProductSku($product),
+                 "image" => (string) $this->getProductImage($product),
+                 "url"   => (string) $this->getProductUrl($product)
             );
         }
 
@@ -373,7 +378,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "id"    => (int)    $product->getProduct()->getId(),
                 "name"  => (string) $product->getProduct()->getName(),
                 "price" => (float)  $product->getProduct()->getPrice(),
-                "sku"   => (int)    $product->getProduct()->getSku(),
+                "sku"   => (string) $product->getProduct()->getSku(),
                 "image" => (string) $product->getProduct()->getImageUrl(),
                 "qty"   => (int)    $product->getQty(),
                 "url"   => (string) $product->getProduct()->getProductUrl()

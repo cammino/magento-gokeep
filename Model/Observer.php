@@ -13,8 +13,8 @@ class Gokeep_Tracking_Model_Observer
 		
 		Mage::getModel('core/session')->setGokeepAddProductToCart(
 			new Varien_Object(array(
-				'id' => $id,
-				'qty' => $qty
+				'id'  => (int) $id,
+				'qty' => (int) $qty
 			))
 		);
 	}
@@ -33,8 +33,8 @@ class Gokeep_Tracking_Model_Observer
 
 		Mage::getModel('core/session')->setGokeepDeleteProductFromCart(
 			new Varien_Object(array(
-				'id' => $product->getId(),
-				'qty' => $item->getQty()
+				'id'  => (int) $product->getId(),
+				'qty' => (int) $item->getQty()
 			))
 		);
 	}
@@ -48,13 +48,17 @@ class Gokeep_Tracking_Model_Observer
 	{
 		$cart = Mage::getSingleton('checkout/cart')->getQuote();		
 			
-		foreach ($cart->getAllItems() as $product)
+		foreach ($cart->getAllItems() as $cartItem)
 		{
+
+			$product = $cartItem->getProduct();
+
 			$items[] = array(
-	            "id"    => (int) $product->getProduct()->getId(),
-	            "name"  => $product->getProduct()->getName(),
-	            "price" => (float) $product->getProduct()->getPrice(),
-	            "qty"   => $product->getQty()
+	            "id"    => (int)    $product->getId(),
+	            "name"  => (string) $product->getName(),
+	            "price" => (float)  $product->getPrice(),
+	            "sku"   => (string) $product->getSku(),
+	            "qty"   => (int)    $cartItem->getQty()
             );
 		}
 
