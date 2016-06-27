@@ -392,7 +392,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "price" => (float)  $this->getProductPrice($product),
                 "sku"   => (string) $product->getSku(),
                 "image" => (string) $product->getImageUrl(),
-                "qty"   => (int)    $product->getQty(),
+                "qty"   => (int)    $quoteItem->getQty(),
                 "url"   => (string) $product->getProductUrl()
             );
         }
