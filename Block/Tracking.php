@@ -324,7 +324,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "price"     => (float)  $this->getProductPrice($product),
             "sku"       => (string) $this->getProductSku($product),
             "image"     => (string) $this->getProductImage($product),
-            "url"       => (string) $this->getProductUrl($product)
+            "url"       => (string) $this->getProductUrl($product),
+            "category"  => (string) $this->getRegistryCategory()
         );
 
         $tag = "gokeep('send', 'productview', " . json_encode($items) . ");";
@@ -344,17 +345,18 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
         foreach ($products as $product){
             $items[] = array(
-                 "id"    => (int)    $this->getProductId($product),
-                 "name"  => (string) $this->getProductName($product),
-                 "price" => (float)  $this->getProductPrice($product),
-                 "sku"   => (string) $this->getProductSku($product),
-                 "image" => (string) $this->getProductImage($product),
-                 "url"   => (string) $this->getProductUrl($product)
+                 "id"       => (int)    $this->getProductId($product),
+                 "name"     => (string) $this->getProductName($product),
+                 "price"    => (float)  $this->getProductPrice($product),
+                 "sku"      => (string) $this->getProductSku($product),
+                 "image"    => (string) $this->getProductImage($product),
+                 "url"      => (string) $this->getProductUrl($product),
+                 "category" => (string) $this->getRegistryCategory()
             );
         }
 
         $json = array(
-            "list"  => Mage::registry('current_category')->getName(),
+            "list"  => $this->getRegistryCategory(),
             "items" => $items
         );
 
@@ -473,6 +475,18 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     {
         return $product->getProductUrl();
     }
+
+    /**
+    * Get the registry category in product detail and product list
+    *
+    * @return string
+    */
+    public function getRegistryCategory()
+    {
+        $category = Mage::registry('current_category');
+
+        return $category->getName();
+    }    
 
     /**
     * Check if is page checkout/onepage
