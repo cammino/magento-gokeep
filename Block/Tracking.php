@@ -387,7 +387,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             $items[] = array (
                 "id"    => (int)    $product->getProduct()->getId(),
                 "name"  => (string) $product->getProduct()->getName(),
-                "price" => (float)  $this->getProductPrice($product),
+                "price" => (float)  $this->getProductPrice($product->getProduct()),
                 "sku"   => (string) $product->getProduct()->getSku(),
                 "image" => (string) $product->getProduct()->getImageUrl(),
                 "qty"   => (int)    $product->getQty(),
