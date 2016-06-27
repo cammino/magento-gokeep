@@ -381,17 +381,19 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     {
         $items = array();
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $products = $quote->getAllVisibleItems();
+        $quoteItems = $quote->getAllVisibleItems();
         
-        foreach ($products as $product) {
+        foreach ($quoteItems as $quoteItem) {
+            $product = Mage::getModel("catalog/product")->load($quoteItem->getProduct()->getId());
+
             $items[] = array (
-                "id"    => (int)    $product->getProduct()->getId(),
-                "name"  => (string) $product->getProduct()->getName(),
-                "price" => (float)  $this->getProductPrice($product->getProduct()),
-                "sku"   => (string) $product->getProduct()->getSku(),
-                "image" => (string) $product->getProduct()->getImageUrl(),
+                "id"    => (int)    $product->getId(),
+                "name"  => (string) $product->getName(),
+                "price" => (float)  $this->getProductPrice($product),
+                "sku"   => (string) $product->getSku(),
+                "image" => (string) $product->getImageUrl(),
                 "qty"   => (int)    $product->getQty(),
-                "url"   => (string) $product->getProduct()->getProductUrl()
+                "url"   => (string) $product->getProductUrl()
             );
         }
         return json_encode($items);
