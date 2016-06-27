@@ -485,7 +485,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     {
         $category = Mage::registry('current_category');
 
-        return if $category ? $category->getName() : "";
+        return $category ? $category->getName() : "";
     }    
 
     /**
