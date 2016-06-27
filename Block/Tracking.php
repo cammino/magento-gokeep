@@ -202,7 +202,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             $items[] = array (
                 "id"    => (int)    $product->getId(),
                 "name"  => (string) $product->getName(),
-                "price" => (float)  $product->getPrice(),
+                "price" => (float)  $this->getProductPrice($product),
                 "sku"   => (string) $product->getSku(),
                 "image" => (string) $product->getImageUrl(),
                 "qty"   => (int)    $orderItem->getData('qty_ordered'),
@@ -379,7 +379,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             $items[] = array (
                 "id"    => (int)    $product->getProduct()->getId(),
                 "name"  => (string) $product->getProduct()->getName(),
-                "price" => (float)  $product->getProduct()->getPrice(),
+                "price" => (float)  $this->getProductPrice($product),
                 "sku"   => (string) $product->getProduct()->getSku(),
                 "image" => (string) $product->getProduct()->getImageUrl(),
                 "qty"   => (int)    $product->getQty(),
@@ -443,7 +443,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getProductPrice($product)
     {
-        return $product->getPrice();
+        return $product->getFinalPrice();
     }
 
     /**
