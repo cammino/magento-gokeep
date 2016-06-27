@@ -70,7 +70,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         }
 
         // Category Page
-        if (Mage::registry('current_category'))
+        if ($this->getRegistryCategory() || $this->isSearchPage())
         {
             return $this->getTagProductImpression();
         }
@@ -342,6 +342,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $tag   = "";
         $items = array();
         $products = $this->getProducts();
+        $isSearchPage = $this->isSearchPage();
 
         foreach ($products as $product){
             $items[] = array(
@@ -351,12 +352,19 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                  "sku"      => (string) $this->getProductSku($product),
                  "image"    => (string) $this->getProductImage($product),
                  "url"      => (string) $this->getProductUrl($product),
-                 "category" => (string) $this->getRegistryCategory()
+                 "category" => $isSearchPage == false ? (string) $this->getRegistryCategory() : ""
             );
         }
 
+        if ($isSearchPage) {
+            $term = Mage::helper('catalogsearch')->getQueryText();
+            $list = "Busca por '{$term}'";
+        } else {
+            $list = $this->getRegistryCategory();
+        }
+
         $json = array(
-            "list"  => $this->getRegistryCategory(),
+            "list"  => $list,
             "items" => $items
         );
 
@@ -496,6 +504,17 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     public function isCheckoutPage()
     {
         return (Mage::app()->getFrontController()->getRequest()->getControllerName() == "onepage");
+    }
+
+    /**
+    * Check if is page checkout/onepage
+    *
+    * @return bool
+    */
+    public function isSearchPage()
+    {
+        
+        return (Mage::app()->getFrontController()->getRequest()->getControllerName() == "result");
     }
 
     /**
