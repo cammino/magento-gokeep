@@ -112,12 +112,19 @@ class Gokeep_Tracking_Model_Observer
 	public function setLeadRegisterBilling()
 	{
 		$post = Mage::app()->getRequest()->getPost();
-		$return = array(
-			"name" 	=> $post["billing"]["firstname"] . " " . $post["billing"]["lastname"],
-			"email" => $post["billing"]["email"]
-		);
 
-		Mage::getModel('core/session')->setGokeepLeadBilling($return);
+		if(isset($post["billing"])){
+			$name  = isset($post["billing"]["firstname"]) ? $post["billing"]["firstname"] : "";
+			$name .= isset($post["billing"]["lastname"]) ? " " . $post["billing"]["lastname"] : "";
+			$email = isset($post["billing"]["email"]) ? $post["billing"]["email"] : "";
+
+			$return = array(
+				"name" 	=> $name,
+				"email" => $email
+			);
+			
+			Mage::getModel('core/session')->setGokeepLeadBilling($return);
+		}
 	}
 
 	/**
