@@ -197,7 +197,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
         foreach ($orderItems as $orderItem) {
 
-            $product = $orderItem->getProduct();
+            $product = $orderItem->getProduct() != NULL ? $orderItem->getProduct() : $orderItem;
 
             $items[] = array (
                 "id"    => (int)    $product->getId(),
