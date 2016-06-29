@@ -454,7 +454,54 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getProductPrice($product)
     {
-        return $product->getFinalPrice();
+        $productType = $product->getTypeId() != NULL ? $product->getTypeId() : $product->product_type;
+
+        if ($productType == "simple") {
+            return $this->getSimpleProductPrice($product);
+        } else if ($productType == "grouped") {
+            return $this->getGroupedProductPrice($product);
+        } else{
+            return 666;
+        }
+    }
+
+    public function getSimpleProductPrice($product) {
+        if ($product->getSpecialPrice() > 0) {          
+            return $product->getSpecialPrice();
+        }else{
+            if($product->getFinalPrice() > 0){
+                return $product->getFinalPrice();
+            }else{
+                return $product->getPrice();
+            }
+        }
+    }
+
+    public function getGroupedProductPrice($product) {
+        $associated = $this->getAssociatedProducts($product);
+        $prices = array();
+        $minimal = 0;
+
+        foreach($associated as $item) {
+            if ($item->getPrice() > 0) {
+                array_push($prices, $item->getPrice());
+            }
+        }
+
+        rsort($prices, SORT_NUMERIC);
+
+        if (count($prices) > 0) {
+            $minimal = end($prices);    
+        }
+
+        return $minimal;
+    }
+
+    public function getAssociatedProducts($product) {
+        $collection = $product->getTypeInstance(true)->getAssociatedProductCollection($product)
+            ->addAttributeToSelect('*')
+            ->addAttributeToFilter('status', 1);
+        return $collection;
     }
 
     /**
