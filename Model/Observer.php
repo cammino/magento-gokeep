@@ -1,6 +1,23 @@
 <?php
+/**
+ * Observer
+ *
+ * This file is responsible for execute functions from observers
+ *
+ * @category   Gokeep
+ * @package    Tracking
+ * @author     Cammino Digital <contato@cammino.com.br>
+ */
+
 class Gokeep_Tracking_Model_Observer 
 {
+	protected $gokeepHelper;
+
+    function __construct()
+    {
+        $this->gokeepHelper = Mage::helper('gokeep');
+    }
+
 	/**
     * Observer responsible for get the product added to cart
     *
@@ -50,14 +67,13 @@ class Gokeep_Tracking_Model_Observer
 			
 		foreach ($cart->getAllItems() as $cartItem)
 		{
-
 			$product = $cartItem->getProduct();
 
 			$items[] = array(
-	            "id"    => (int)    $product->getId(),
-	            "name"  => (string) $product->getName(),
-	            "price" => (float)  $product->getPrice(),
-	            "sku"   => (string) $product->getSku(),
+	            "id"    => (int)    $gokeepHelper->getProductId($product),
+	            "name"  => (string) $gokeepHelper->getProductName($product),
+	            "price" => (float)  $gokeepHelper->getProductPrice($product),
+	            "sku"   => (string) $gokeepHelper->getProductSku($product),
 	            "qty"   => (int)    $cartItem->getQty()
             );
 		}
