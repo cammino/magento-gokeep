@@ -1,12 +1,13 @@
 <?php if($this->isGokeepActive()): ?>
 <!-- Gokeep Checkout start -->
 <script>
-	function tagGokeep(step,step_label){
-		gokeep("send", "checkout", { step: step, step_label: step_label, additional: "", items: <?php echo $this->getItemsTagCheckout(); ?> });
-	    gokeep("send", "pageview"); // usando ajax ou adicionando mais methods é obrigatorio o pageview
-	}
-
 	document.observe("dom:loaded", function() {
+		
+		function tagGokeep(step,step_label){
+			gokeep("send", "checkout", { step: step, step_label: step_label, additional: "", items: <?php echo $this->getItemsTagCheckout(); ?> });
+		    gokeep("send", "pageview"); // usando ajax ou adicionando mais methods é obrigatorio o pageview
+		}
+
 		var eventGokee = function (method) {
 			switch (method) {
 				case "opc-login": 				tagGokeep(1,"Login");					break;
