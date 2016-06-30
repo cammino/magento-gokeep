@@ -203,16 +203,14 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $items = array();
 
         foreach ($orderItems as $orderItem) {
-
-            $product = $orderItem->getProduct() != NULL ? $orderItem->getProduct() : $orderItem;
-            $product = Mage::getModel('catalog/product')->load($product->getProductId());
+            $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
 
             $items[] = array (
-                "id"    => (int)    $product->getId(),
+                "id"    => (int)    $this->gokeepHelper->getProductId($product),
                 "name"  => (string) $this->gokeepHelper->getProductName($product),
                 "price" => (float)  $this->gokeepHelper->getOrderItemPrice($orderItem),
                 "sku"   => (string) $this->gokeepHelper->getProductSku($product),
-                "image" => (string) $product->getImageUrl(),
+                "image" => (string) $this->gokeepHelper->getProductImage($product),
                 "qty"   => (int)    $orderItem->getData('qty_ordered'),
                 "url"   => (string) $this->gokeepHelper->getProductUrl($product)
             );
