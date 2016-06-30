@@ -179,7 +179,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "email" => $customer["email"]
         );
 
-        return "gokeep('send', 'lead', ". $this->toJson($json) .");";
+        return "gokeep('send', 'lead', ". $this->getJson($json) .");";
     }
 
     /**
@@ -201,8 +201,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
             $items[] = array (
                 "id"    => (int)    $product->getId(),
-                "name"  => (string) $product->getName(),
-                "price" => (float)  $this->getProductPrice($product),
+                "name"  => (string) $this->getProductName($product),
+                "price" => (float)  $this->getOrderItemPrice($orderItem),
                 "sku"   => (string) $product->getSku(),
                 "image" => (string) $product->getImageUrl(),
                 "qty"   => (int)    $orderItem->getData('qty_ordered'),
@@ -221,8 +221,17 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
         Mage::getModel('core/session')->unsGokeepOrder();
 
-        $tag = "gokeep('send', 'order', " . $this->toJson($json) . "); ";
+        $tag = "gokeep('send', 'order', " . $this->getJson($json) . "); ";
         return $tag;
+    }
+
+    /**
+    * Calc item price from order
+    *
+    * @return string
+    */
+    function getOrderItemPrice($orderItem) {
+        return (($orderItem->getRowTotal()-$orderItem->getDiscount())/$orderItem->getQtyOrdered());
     }
 
     /**
@@ -252,7 +261,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         
         Mage::getModel('core/session')->unsGokeepUpdateProductCart();
 
-        $tag = "gokeep('send', 'cartupdate', " . $this->toJson($items) . ");";
+        $tag = "gokeep('send', 'cartupdate', " . $this->getJson($items) . ");";
         return $tag;
     }
 
@@ -278,7 +287,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "url"   => (string) $this->getProductUrl($product)
         );
         
-        $tag = "gokeep('send', 'cartremove', " . $this->toJson($items) . ");";
+        $tag = "gokeep('send', 'cartremove', " . $this->getJson($items) . ");";
 
         return $tag;
     }
@@ -305,7 +314,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "url"   => (string) $this->getProductUrl($product)
         );
 
-        $tag = "gokeep('send', 'cartadd', " . $this->toJson($items) . ");";
+        $tag = "gokeep('send', 'cartadd', " . $this->getJson($items) . ");";
         return $tag;
     }
 
@@ -328,7 +337,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "category"  => (string) $this->getRegistryCategory()
         );
 
-        $tag = "gokeep('send', 'productview', " . $this->toJson($items) . ");";
+        $tag = "gokeep('send', 'productview', " . $this->getJson($items) . ");";
         return $tag;
     }
 
@@ -368,7 +377,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             "items" => $items
         );
 
-        $tag = "gokeep('send', 'productimpression', " . $this->toJson($json) ."); ";
+        $tag = "gokeep('send', 'productimpression', " . $this->getJson($json) ."); ";
         return $tag;
     }
 
@@ -388,7 +397,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
             $items[] = array (
                 "id"    => (int)    $product->getId(),
-                "name"  => (string) $product->getName(),
+                "name"  => (string) $this->getProductName($product),
                 "price" => (float)  $this->getProductPrice($product),
                 "sku"   => (string) $product->getSku(),
                 "image" => (string) $product->getImageUrl(),
@@ -396,7 +405,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "url"   => (string) $product->getProductUrl()
             );
         }
-        return $this->toJson($items);
+        return $this->getJson($items);
     }
 
     /**
@@ -563,7 +572,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function isSearchPage()
     {
-        
         return (Mage::app()->getFrontController()->getRequest()->getControllerName() == "result");
     }
 
@@ -578,12 +586,13 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     }
 
     /**
-    * Convert string in json removing special caracters
+    * Convert string in json
     *
     * @return json
     */
-    public function toJson($string)
+    public function getJson($string)
     {
-        return json_encode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $string), true );
+        return json_encode($string);
     }
+
 }
