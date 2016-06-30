@@ -70,10 +70,10 @@ class Gokeep_Tracking_Model_Observer
 			$product = $cartItem->getProduct();
 
 			$items[] = array(
-	            "id"    => (int)    $gokeepHelper->getProductId($product),
-	            "name"  => (string) $gokeepHelper->getProductName($product),
-	            "price" => (float)  $gokeepHelper->getProductPrice($product),
-	            "sku"   => (string) $gokeepHelper->getProductSku($product),
+	            "id"    => (int)    $this->gokeepHelper->getProductId($product),
+	            "name"  => (string) $this->gokeepHelper->getProductName($product),
+	            "price" => (float)  $this->gokeepHelper->getProductPrice($product),
+	            "sku"   => (string) $this->gokeepHelper->getProductSku($product),
 	            "qty"   => (int)    $cartItem->getQty()
             );
 		}

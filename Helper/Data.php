@@ -130,7 +130,6 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
     */
     public function getProductUrl($product)
     {
-		Mage::app()->setCurrentStore('default');
 		return Mage::helper('catalog/product')->getProductUrl($product->getId());
     }
 
