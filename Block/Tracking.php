@@ -412,14 +412,23 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getProducts()
     {
+
+        // get current pagination to use in product collection
+        $current_page = Mage::getBlockSingleton('page/html_pager')->getCurrentPage();
+        $limit = Mage::getSingleton('core/app')->getRequest()->getParam('limit');
+
+        if (empty($limit))
+            $limit = Mage::getStoreConfig('catalog/frontend/grid_per_page');
+        
+        $initial = (empty($current_page) || $current_page == 1) ? 0 : $limit * ( $current_page - 1 );
+
         $productList_block  = Mage::app()->getLayout()->createBlock('catalog/product_list');        
-        $collection = $productList_block->getLoadedProductCollection();
+        $collection = clone $productList_block->getLoadedProductCollection();
         $collection->addAttributeToSelect('image');
-        $collection->clear();
-        $collection->getSelect()->reset(Zend_Db_Select::ORDER);
         $collection->setOrder('entity_id','asc');
-        $collection->getSelect()->limit(100, 0);
+        $collection->getSelect()->limit($limit, $initial);
         $collection->load();
+        
         return $collection;
     }
 
