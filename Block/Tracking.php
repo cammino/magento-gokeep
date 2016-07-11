@@ -425,7 +425,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $productList_block  = Mage::app()->getLayout()->createBlock('catalog/product_list');        
         $collection = clone $productList_block->getLoadedProductCollection();
         $collection->addAttributeToSelect('image');
-        $collection->setOrder('entity_id','asc');
         $collection->getSelect()->limit($limit, $initial);
         $collection->load();
         
