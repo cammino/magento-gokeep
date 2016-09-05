@@ -27,11 +27,13 @@ class Gokeep_Tracking_Model_Observer
 	{
 		$id  = Mage::app()->getRequest()->getParam('product', 0);
 		$qty = Mage::app()->getRequest()->getParam('qty', 1);
+		$superGroup = Mage::app()->getRequest()->getParam('super_group');
 		
 		Mage::getModel('core/session')->setGokeepAddProductToCart(
 			new Varien_Object(array(
 				'id'  => (int) $id,
-				'qty' => (int) $qty
+				'qty' => (int) $qty,
+				'super_group' => (array) $superGroup
 			))
 		);
 	}
@@ -72,7 +74,7 @@ class Gokeep_Tracking_Model_Observer
 			$items[] = array(
 	            "id"    => (int)    $this->gokeepHelper->getProductId($product),
 	            "name"  => (string) $this->gokeepHelper->getProductName($product),
-	            "price" => (float)  $this->gokeepHelper->getProductPrice($product),
+	            "price" => (float)  $cartItem->getPrice(),
 	            "sku"   => (string) $this->gokeepHelper->getProductSku($product),
 	            "qty"   => (int)    $cartItem->getQty()
             );
@@ -151,11 +153,18 @@ class Gokeep_Tracking_Model_Observer
 	public function setSubscriber(Varien_Event_Observer $observer)
 	{
 	    $data = $observer->getEvent()->getDataObject()->getData();
+	    $post = Mage::app()->getRequest()->getPost();
+	    $name = "";
+
+	    if (isset($post["name"])) {
+	    	$name = $post["name"];
+	    }
+
 	    $return = array(
-			"name" 	=> "",
+			"name" 	=> $name,
 			"email" => $data["subscriber_email"]
 		);
-		
+
 	    Mage::getModel('core/session')->setGokeepLeadSubscriber($return);
 	}
 }

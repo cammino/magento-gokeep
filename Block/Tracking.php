@@ -285,7 +285,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         );
         
         $tag = "gokeep('send', 'cartremove', " . $this->gokeepHelper->getJson($items) . ");";
-
         return $tag;
     }
 
@@ -297,19 +296,31 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     private function getTagCartAdd()
     {
         $sessionItem = Mage::getModel('core/session')->getGokeepAddProductToCart();
-        $product = Mage::getModel('catalog/product')->load($sessionItem->getId());
+        $products[] = Mage::getModel('catalog/product')->load($sessionItem->getId());
+        $cart = Mage::getSingleton('checkout/cart')->getQuote();
+        $superGroup = $sessionItem->getSuperGroup();
+        $items = array();
+
+        if (($superGroup != null) && (count((array)$superGroup) > 0)) {
+            $products = array();
+            foreach ($superGroup as $superGroupId => $superGroupQty) {
+                $products[] = Mage::getModel('catalog/product')->load($superGroupId);
+            }
+        }
 
         Mage::getModel('core/session')->unsGokeepAddProductToCart();
 
-        $items[] = array(
-            "id"    => (int)    $this->gokeepHelper->getProductId($product),
-            "name"  => (string) $this->gokeepHelper->getProductName($product),
-            "price" => (float)  $this->gokeepHelper->getProductPrice($product),
-            "sku"   => (string) $this->gokeepHelper->getProductSku($product),
-            "image" => (string) $this->gokeepHelper->getProductImage($product),
-            "qty"   => (int)    $sessionItem->getQty(),
-            "url"   => (string) $this->gokeepHelper->getProductUrl($product)
-        );
+        foreach ($products as $product) {
+            $items[] = array(
+                "id"    => (int)    $this->gokeepHelper->getProductId($product),
+                "name"  => (string) $this->gokeepHelper->getProductName($product),
+                "price" => (float)  $this->gokeepHelper->getProductPrice($product),
+                "sku"   => (string) $this->gokeepHelper->getProductSku($product),
+                "image" => (string) $this->gokeepHelper->getProductImage($product),
+                "qty"   => (int)    $sessionItem->getQty(),
+                "url"   => (string) $this->gokeepHelper->getProductUrl($product)
+            );
+        }
 
         $tag = "gokeep('send', 'cartadd', " . $this->gokeepHelper->getJson($items) . ");";
         return $tag;
