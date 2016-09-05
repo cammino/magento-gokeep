@@ -55,15 +55,7 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
     * @return string
     */
     public function getSimpleProductPrice($product) {
-        if ($product->getSpecialPrice() > 0) {          
-            return $product->getSpecialPrice();
-        }else{
-            if($product->getFinalPrice() > 0){
-                return $product->getFinalPrice();
-            }else{
-                return $product->getPrice();
-            }
-        }
+        return $product->getFinalPrice();
     }
 
     /**
@@ -77,8 +69,8 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
         $minimal = 0;
 
         foreach($associated as $item) {
-            if ($item->getPrice() > 0) {
-                array_push($prices, $item->getPrice());
+            if ($item->getFinalPrice() > 0) {
+                array_push($prices, $item->getFinalPrice());
             }
         }
 
