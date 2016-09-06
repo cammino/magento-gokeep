@@ -8,7 +8,7 @@
 		    gokeep("send", "pageview"); // usando ajax ou adicionando mais methods é obrigatorio o pageview
 		}
 
-		var eventGokee = function (method) {
+		var eventGokeep = function (method) {
 			switch (method) {
 				case "opc-login": 				tagGokeep(1,"Login");					break;
 				case "opc-billing": 			tagGokeep(2,"Endereço de Cobrança");	break;
@@ -20,11 +20,11 @@
 		}
 
 		// Starts when the page loads
-		eventGokee(accordion.currentSection);
+		eventGokeep(accordion.currentSection);
 		
 		// Starts when the variable (currentSection) changes
 		accordion.watch("currentSection", function (currentSection, oldSection, newSection) {
-			eventGokee(newSection);
+			eventGokeep(newSection);
 			return newSection;
 		});
 	});

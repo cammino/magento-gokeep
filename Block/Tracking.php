@@ -45,7 +45,12 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getPageTrackingCode()
     {
-        return $this->setPage();
+        try {
+            return $this->setPage();
+        } catch (Exception $e) {
+            Mage::log($e, null, 'gokeep.log');
+            return "";
+        }
     }
 
     /**
@@ -55,10 +60,20 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getObserverTrackingCode($page)
     {
-        if($page == "cart") { return $this->setObserverCart();  }
-        if($page == "order"){ return $this->setObserverOrder(); }
-        if($page == "lead") { return $this->setObserverLead();  }
-        return "";
+        try {
+            if($page == "cart") {
+                return $this->setObserverCart();
+            } else if($page == "order"){
+                return $this->setObserverOrder();
+            } else if($page == "lead") {
+                return $this->setObserverLead();
+            } else {
+                return "";
+            }
+        } catch (Exception $e) {
+            Mage::log($e, null, 'gokeep.log');
+            return "";
+        }
     }
 
     /**
@@ -204,15 +219,27 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
 
         foreach ($orderItems as $orderItem) {
             $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
+            $url = $product->getProductUrl();
+            $img = $product->getImageUrl();
+
+            if ($orderItem->getProductType() == "grouped") {
+                $buyRequest = $orderItem->getBuyRequest();
+                if (isset($buyRequest["super_product_config"]) && isset($buyRequest["super_product_config"]["product_id"])) {
+                    $parentId = $buyRequest["super_product_config"]["product_id"];
+                    $parentProduct = Mage::getModel("catalog/product")->load($parentId);
+                    $url = $parentProduct->getProductUrl();
+                    $img = $parentProduct->getImageUrl();
+                }
+            }
 
             $items[] = array (
                 "id"    => (int)    $this->gokeepHelper->getProductId($product),
                 "name"  => (string) $this->gokeepHelper->getProductName($product),
                 "price" => (float)  $this->gokeepHelper->getOrderItemPrice($orderItem),
                 "sku"   => (string) $this->gokeepHelper->getProductSku($product),
-                "image" => (string) $this->gokeepHelper->getProductImage($product),
+                "image" => (string) $img,
                 "qty"   => (int)    $orderItem->getData('qty_ordered'),
-                "url"   => (string) $this->gokeepHelper->getProductUrl($product)
+                "url"   => (string) $url
             );
         }
 
@@ -300,6 +327,8 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $cart = Mage::getSingleton('checkout/cart')->getQuote();
         $superGroup = $sessionItem->getSuperGroup();
         $items = array();
+        $url = count($products) > 0 ? $this->gokeepHelper->getProductUrl($products[0]) : "";
+        $img = count($products) > 0 ? $this->gokeepHelper->getProductImage($products[0]) : "";
 
         if (($superGroup != null) && (count((array)$superGroup) > 0)) {
             $products = array();
@@ -316,9 +345,9 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
                 "name"  => (string) $this->gokeepHelper->getProductName($product),
                 "price" => (float)  $this->gokeepHelper->getProductPrice($product),
                 "sku"   => (string) $this->gokeepHelper->getProductSku($product),
-                "image" => (string) $this->gokeepHelper->getProductImage($product),
+                "image" => (string) $img,
                 "qty"   => (int)    $sessionItem->getQty(),
-                "url"   => (string) $this->gokeepHelper->getProductUrl($product)
+                "url"   => (string) $url
             );
         }
 
@@ -402,15 +431,27 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         
         foreach ($quoteItems as $quoteItem) {
             $product = Mage::getModel("catalog/product")->load($quoteItem->getProduct()->getId());
+            $url = $product->getProductUrl();
+            $img = $product->getImageUrl();
+
+            if ($quoteItem->getProductType() == "grouped") {
+                $buyRequest = $quoteItem->getBuyRequest();
+                if (isset($buyRequest["super_product_config"]) && isset($buyRequest["super_product_config"]["product_id"])) {
+                    $parentId = $buyRequest["super_product_config"]["product_id"];
+                    $parentProduct = Mage::getModel("catalog/product")->load($parentId);
+                    $url = $parentProduct->getProductUrl();
+                    $img = $parentProduct->getImageUrl();
+                }
+            }
 
             $items[] = array (
                 "id"    => (int)    $product->getId(),
                 "name"  => (string) $this->gokeepHelper->getProductName($product),
                 "price" => (float)  $this->gokeepHelper->getProductPrice($product),
                 "sku"   => (string) $product->getSku(),
-                "image" => (string) $product->getImageUrl(),
+                "image" => (string) $img,
                 "qty"   => (int)    $quoteItem->getQty(),
-                "url"   => (string) $product->getProductUrl()
+                "url"   => (string) $url
             );
         }
         return $this->gokeepHelper->getJson($items);
