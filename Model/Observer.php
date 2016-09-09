@@ -70,13 +70,22 @@ class Gokeep_Tracking_Model_Observer
 		foreach ($cart->getAllItems() as $cartItem)
 		{
 			$product = $cartItem->getProduct();
+			$parentId = null;
+
+            if ($cartItem->getProductType() == "grouped") {
+                $buyRequest = $cartItem->getBuyRequest();
+                if (isset($buyRequest["super_product_config"]) && isset($buyRequest["super_product_config"]["product_id"])) {
+                	$parentId = $buyRequest["super_product_config"]["product_id"];
+                }
+            }
 
 			$items[] = array(
 	            "id"    => (int)    $this->gokeepHelper->getProductId($product),
 	            "name"  => (string) $this->gokeepHelper->getProductName($product),
 	            "price" => (float)  $cartItem->getPrice(),
 	            "sku"   => (string) $this->gokeepHelper->getProductSku($product),
-	            "qty"   => (int)    $cartItem->getQty()
+	            "qty"   => (int)    $cartItem->getQty(),
+	            'parent_id' => (int) $parentId
             );
 		}
 

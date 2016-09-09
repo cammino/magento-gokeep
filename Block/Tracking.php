@@ -271,15 +271,23 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         foreach ($sessionItems as $sessionItem) {
 
             $product = Mage::getModel('catalog/product')->load($sessionItem["id"]);
+            $url = $this->gokeepHelper->getProductUrl($product);
+            $img = $this->gokeepHelper->getProductImage($product);
+
+            if ($sessionItem["parent_id"] != null) {
+                $parentProduct = Mage::getModel('catalog/product')->load($sessionItem["parent_id"]);
+                $url = $this->gokeepHelper->getProductUrl($parentProduct);
+                $img = $this->gokeepHelper->getProductImage($parentProduct);
+            }
 
             $items[] = array(
                 "id"    => (int)    $sessionItem["id"],
                 "name"  => (string) $sessionItem["name"],
                 "price" => (float)  $sessionItem["price"],
                 "sku"   => (string) $sessionItem["sku"],
-                "image" => (string) $product->getImageUrl(),
+                "image" => (string) $img,
                 "qty"   => (int)    $sessionItem["qty"],
-                "url"   => (string) $this->gokeepHelper->getProductUrl($product)
+                "url"   => (string) $url
             );
         }
         
