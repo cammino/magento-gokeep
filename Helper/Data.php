@@ -39,11 +39,12 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductPrice($product)
     {
         $productType = $product->getTypeId() != NULL ? $product->getTypeId() : $product->product_type;
-
         if ($productType == "simple") {
             return $this->getSimpleProductPrice($product);
         } else if ($productType == "grouped") {
             return $this->getGroupedProductPrice($product);
+        } else if ($productType == "bundle") {
+            return $this->getBundleProductPrice($product);
         } else{
             return "";
         }
@@ -81,6 +82,32 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $minimal;
+    }
+
+    /**
+    * Get price for bundle product
+    *
+    * @return string
+    */
+    public function getBundleProductPrice($product){
+        $optionCollection = $product->getTypeInstance(true)->getOptionsIds($product);
+        $selectionsCollection = Mage::getModel('bundle/selection')->getCollection();
+        $selectionsCollection->getSelect()->where('option_id in (?)', $optionCollection)->where('is_default = ?', 1);
+        $defaultPrice = 0;
+
+        foreach ($selectionsCollection as $_selection) {
+            $_selectionProduct = Mage::getModel('catalog/product')->load($_selection->getProductId());
+            $_selectionPrice = $product->getPriceModel()->getSelectionFinalTotalPrice(
+                $product,
+                $_selectionProduct,
+                0,
+                $_selection->getSelectionQty(),
+                false,
+                true
+            );
+            $defaultPrice += ($_selectionPrice * $_selection->getSelectionQty());
+        }
+        return $defaultPrice;
     }
 
     /**
