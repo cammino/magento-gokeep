@@ -111,6 +111,25 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+    * Get price of last product changed in quote
+    *
+    * @return float
+    */
+    public function getPriceProductQuote($productId){
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $lastItem = null;
+        $price = 0;
+        foreach ($quote->getAllItems() as $item) {
+            if($item->getProductId() == $productId){
+                $lastItem = $lastItem == null ? $item : $lastItem;
+                $lastItem = $lastItem->getCreatedAt() < $item->getCreatedAt() ? $item : $lastItem;
+                $price = $lastItem->getPrice();
+            }
+        }
+        return $price;
+    }
+
+    /**
     * Get associated products of one product
     *
     * @return collection

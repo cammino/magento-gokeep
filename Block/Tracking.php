@@ -253,7 +253,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         );
 
         Mage::getModel('core/session')->unsGokeepOrder();
-
         $tag = "gokeep('send', 'order', " . $this->gokeepHelper->getJson($json) . "); ";
         return $tag;
     }
@@ -292,7 +291,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         }
         
         Mage::getModel('core/session')->unsGokeepUpdateProductCart();
-
         $tag = "gokeep('send', 'cartupdate', " . $this->gokeepHelper->getJson($items) . ");";
         return $tag;
     }
@@ -307,18 +305,17 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         $sessionItem = Mage::getModel('core/session')->getGokeepDeleteProductFromCart();
         $product = Mage::getModel('catalog/product')->load($sessionItem->getId());
 
-        Mage::getModel('core/session')->unsGokeepDeleteProductFromCart();
-        
         $items[] = array(
             "id"    => (int)    $this->gokeepHelper->getProductId($product),
             "name"  => (string) $this->gokeepHelper->getProductName($product),
-            "price" => (float)  $this->gokeepHelper->getProductPrice($product),
+            "price" => (float)  $sessionItem->getPrice(),
             "sku"   => (string) $this->gokeepHelper->getProductSku($product),
             "image" => (string) $this->gokeepHelper->getProductImage($product),
             "qty"   => (int)    $sessionItem->getQty(),
             "url"   => (string) $this->gokeepHelper->getProductUrl($product)
         );
         
+        Mage::getModel('core/session')->unsGokeepDeleteProductFromCart();
         $tag = "gokeep('send', 'cartremove', " . $this->gokeepHelper->getJson($items) . ");";
         return $tag;
     }
@@ -331,13 +328,12 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     private function getTagCartAdd()
     {
         $sessionItem = Mage::getModel('core/session')->getGokeepAddProductToCart();
-        $products[] = Mage::getModel('catalog/product')->load($sessionItem->getId());
-        $cart = Mage::getSingleton('checkout/cart')->getQuote();
+        $products[] = Mage::getModel('catalog/product')->load($sessionItem->getId());        
         $superGroup = $sessionItem->getSuperGroup();
         $items = array();
+
         $url = count($products) > 0 ? $this->gokeepHelper->getProductUrl($products[0]) : "";
         $img = count($products) > 0 ? $this->gokeepHelper->getProductImage($products[0]) : "";
-
         if (($superGroup != null) && (count((array)$superGroup) > 0)) {
             $products = array();
             foreach ($superGroup as $superGroupId => $superGroupQty) {
@@ -351,7 +347,7 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
             $items[] = array(
                 "id"    => (int)    $this->gokeepHelper->getProductId($product),
                 "name"  => (string) $this->gokeepHelper->getProductName($product),
-                "price" => (float)  $this->gokeepHelper->getProductPrice($product),
+                "price" => (float)  $this->gokeepHelper->getPriceProductQuote($sessionItem->getId()),
                 "sku"   => (string) $this->gokeepHelper->getProductSku($product),
                 "image" => (string) $img,
                 "qty"   => (int)    $sessionItem->getQty(),
@@ -472,7 +468,6 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     public function getProducts()
     {
-
         // get current pagination to use in product collection
         $current_page = Mage::getBlockSingleton('page/html_pager')->getCurrentPage();
         $limit = Mage::getSingleton('core/app')->getRequest()->getParam('limit');

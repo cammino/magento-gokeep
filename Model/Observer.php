@@ -52,8 +52,9 @@ class Gokeep_Tracking_Model_Observer
 
 		Mage::getModel('core/session')->setGokeepDeleteProductFromCart(
 			new Varien_Object(array(
-				'id'  => (int) $product->getId(),
-				'qty' => (int) $item->getQty()
+				'id'  	=> (int) $product->getId(),
+				'qty' 	=> (int) $item->getQty(),
+				'price' => (float) $item->getPrice()
 			))
 		);
 	}
@@ -67,11 +68,11 @@ class Gokeep_Tracking_Model_Observer
 	{
 		$cart = Mage::getSingleton('checkout/cart')->getQuote();		
 			
-		foreach ($cart->getAllItems() as $cartItem)
+		foreach ($cart->getAllVisibleItems() as $cartItem)
 		{
 			$product = $cartItem->getProduct();
 			$parentId = null;
-
+			
             if ($cartItem->getProductType() == "grouped") {
                 $buyRequest = $cartItem->getBuyRequest();
                 if (isset($buyRequest["super_product_config"]) && isset($buyRequest["super_product_config"]["product_id"])) {
