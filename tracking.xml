@@ -6,6 +6,9 @@
 	</default>
 
 	<checkout_onepage_index translate="label">
+		<reference name="head">
+            <action method="addItem"><type>js</type><name>gokeep/watch.polyfill.js</name></action>
+        </reference>
         <reference name="before_body_end">
 			<block type="gokeep/tracking" name="gokeeptrackingcheckout" template="gokeep/tracking-checkout.phtml" />
         </reference>
