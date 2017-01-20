@@ -107,22 +107,19 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     */
     private function setObserverCart()
     {
-        if (Mage::app()->getFrontController()->getRequest()->getControllerName() == "cart")
+        if (Mage::getModel('core/session')->getGokeepAddProductToCart() != null)
         {
-            if (Mage::getModel('core/session')->getGokeepAddProductToCart() != null)
-            {
-                return $this->getTagCartAdd();
-            }
+            return $this->getTagCartAdd();
+        }
 
-            if (Mage::getModel('core/session')->getGokeepDeleteProductFromCart() != null)
-            {
-                return $this->getTagCartRemove();
-            }
+        if (Mage::getModel('core/session')->getGokeepDeleteProductFromCart() != null)
+        {
+            return $this->getTagCartRemove();
+        }
 
-            if (Mage::getModel('core/session')->getGokeepUpdateProductCart() != null)
-            {
-                return $this->getTagCartUpdate();
-            }
+        if (Mage::getModel('core/session')->getGokeepUpdateProductCart() != null)
+        {
+            return $this->getTagCartUpdate();
         }
 
         return "";
