@@ -57,6 +57,7 @@
 					</gokeep_cart_delete>
 				</observers>
 			</controller_action_predispatch_checkout_cart_delete>
+
 			<!-- ajax cart -->
 			<controller_action_predispatch_ajaxcart_cart_add>
 				<observers>
@@ -75,6 +76,26 @@
 				</observers>
 			</controller_action_predispatch_ajaxcart_cart_delete>
 			<!-- ajax cart -->
+
+			<!-- super ajax cart -->
+			<controller_action_predispatch_ajaxcartsuper_ajaxcart_add>
+				<observers>
+					<gokeep_ajaxcartsuper_add>
+						<class>gokeep/observer</class>
+						<method>addToCart</method>
+					</gokeep_ajaxcartsuper_add>
+				</observers>
+			</controller_action_predispatch_ajaxcartsuper_ajaxcart_add>
+			<controller_action_predispatch_ajaxcartsuper_index_cartdelete>
+				<observers>
+					<gokeep_ajaxcartsuper_delete>
+						<class>gokeep/observer</class>
+						<method>deleteFromCart</method>
+					</gokeep_ajaxcartsuper_delete>
+				</observers>
+			</controller_action_predispatch_ajaxcartsuper_index_cartdelete>
+			<!-- super ajax cart -->
+
 			<checkout_cart_update_items_after>
 				<observers>
 					<gokeep_cart_update>
