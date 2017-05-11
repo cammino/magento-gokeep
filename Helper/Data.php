@@ -187,7 +187,7 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
     */
     public function getProductImage($product)
     {
-        return $product->getImageUrl();
+        return Mage::helper('catalog/image')->init($product, 'image');
     }
 
     /**
