@@ -96,6 +96,17 @@
 			</controller_action_predispatch_ajaxcartsuper_index_cartdelete>
 			<!-- super ajax cart -->
 
+			<!-- proaddto ajax cart -->
+			<controller_action_predispatch_proaddto_index_add>
+				<observers>
+					<gokeep_proaddto_add>
+						<class>gokeep/observer</class>
+						<method>addToCart</method>
+					</gokeep_proaddto_add>
+				</observers>
+			</controller_action_predispatch_proaddto_index_add>
+			<!-- proaddto ajax cart -->
+
 			<checkout_cart_update_items_after>
 				<observers>
 					<gokeep_cart_update>
