@@ -45,6 +45,8 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
             return $this->getGroupedProductPrice($product);
         } else if ($productType == "bundle") {
             return $this->getBundleProductPrice($product);
+        } else if ($productType == "configurable") {
+            return $this->getConfigurableProductPrice($product);
         } else{
             return "";
         }
@@ -108,6 +110,33 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
             $defaultPrice += ($_selectionPrice * $_selection->getSelectionQty());
         }
         return $defaultPrice;
+    }
+
+    /**
+    * Get price for configurable product
+    *
+    * @return string
+    */
+    public function getConfigurableProductPrice($product) {
+        $childProducts = Mage::getSingleton('catalog/product_type_configurable')->getUsedProducts( null, $product );
+        $childPriceLowest = '';
+
+        if ( $childProducts ) {
+            foreach ( $childProducts as $child ) {
+                $_child = Mage::getSingleton('catalog/product')->load( $child->getId() );
+                $_inStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_child)->getIsInStock();
+
+                if (($_child->getStatus() != Mage_Catalog_Model_Product_Status::STATUS_DISABLED) && $_inStock) {
+                    if ( $childPriceLowest == '' || $childPriceLowest > $_child->getFinalPrice() ) {
+                        $childPriceLowest =  $_child->getFinalPrice();
+                    }
+                }
+            }
+        } else {
+            $childPriceLowest = $product->getFinalPrice();
+        }
+
+        return $childPriceLowest;
     }
 
     /**
