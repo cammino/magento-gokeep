@@ -7,7 +7,7 @@
                         <children>
                             <config>
                                 <children>
-                                    <gokeep translate="title" module="gokeep_tracking">
+                                    <gokeep translate="title" module="gokeep">
                                         <title>gokeep</title>
                                         <sort_order>999</sort_order>
                                     </gokeep>
