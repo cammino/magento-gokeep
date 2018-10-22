@@ -47,6 +47,8 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
             return $this->getBundleProductPrice($product);
         } else if ($productType == "configurable") {
             return $this->getConfigurableProductPrice($product);
+        } else if ($productType == "downloadable") {
+            return $this->getDownloadableProductPrice($product);
         } else{
             return "";
         }
@@ -137,6 +139,15 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $childPriceLowest;
+    }
+
+    /**
+    * Get price for downloadable product
+    *
+    * @return string
+    */
+    public function getDownloadableProductPrice($product) {
+        return $product->getFinalPrice();
     }
 
     /**
