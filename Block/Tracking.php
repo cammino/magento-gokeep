@@ -92,10 +92,11 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
         }
 
         // Category Page
-        if ($this->getRegistryCategory() || $this->isSearchPage())
-        {
-            return $this->getTagProductImpression();
-        }
+        // Disabled because it's slowing down stores speed (Onlauri)
+        // if ($this->getRegistryCategory() || $this->isSearchPage())
+        // {
+        //     return $this->getTagProductImpression();
+        // }
 
         return "";
     }
