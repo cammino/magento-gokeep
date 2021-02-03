@@ -38,6 +38,9 @@ class Gokeep_Tracking_Helper_Data extends Mage_Core_Helper_Abstract
     */
     public function getProductPrice($product)
     {
+        if ($product->getData("apenas_consulta")) {
+            return 0;
+        }
         $productType = $product->getTypeId() != NULL ? $product->getTypeId() : $product->product_type;
         if ($productType == "simple") {
             return $this->getSimpleProductPrice($product);
