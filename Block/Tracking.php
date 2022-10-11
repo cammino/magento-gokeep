@@ -86,8 +86,12 @@ class Gokeep_Tracking_Block_Tracking extends Mage_Core_Block_Template
     private function setPage()
     {
         // Product View
-        if(Mage::registry('current_product')) 
+        if(Mage::registry('current_product'))
         {
+            if ((intval(Mage::getStoreConfig('themeconfig/themeconfig_group_customer_groups/themeconfig_specific_groups_show_price')) == 1) && !Mage::getSingleton('customer/session')->isLoggedIn()) {
+                return;
+            }
+
             return $this->getTagProductView();
         }
 
