@@ -48,15 +48,18 @@ class Gokeep_Tracking_Model_Observer
 		$cart = Mage::getSingleton('checkout/cart');
 		$id = Mage::app()->getRequest()->getParam('id', 0);
 		$item = $cart->getQuote()->getItemById($id);
-		$product = $item->getProduct();
+		$item = $cart->getQuote() ? $cart->getQuote()->getItemById($itemId) : null;
 
-		Mage::getModel('core/session')->setGokeepDeleteProductFromCart(
-			new Varien_Object(array(
-				'id'  	=> (int) $product->getId(),
-				'qty' 	=> (int) $item->getQty(),
-				'price' => (float) $item->getPrice()
-			))
-		);
+		if ($item) {
+			$product = $item->getProduct();
+			Mage::getModel('core/session')->setGokeepDeleteProductFromCart(
+				new Varien_Object(array(
+					'id'  	=> (int) $product->getId(),
+					'qty' 	=> (int) $item->getQty(),
+					'price' => (float) $item->getPrice()
+				))
+			);
+		}
 	}
 
 	/**
